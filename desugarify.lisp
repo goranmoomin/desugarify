@@ -1,14 +1,18 @@
 ;;;; desugarify.lisp
 
-(defpackage #:desugarify
-  (:use #:cl))
+(defpackage :desugarify
+  (:use :cl
+        :trivia)
+  (:export :$))
 
-(in-package #:desugarify)
+(in-package :desugarify)
 
 (defparameter *desugar-func* (list))
 
 (defun arrow-checker (form)
-  (if (and (listp form) (eql (second form) '=>)) t nil))
+  (match form
+    ((list _ (guard => (equal (symbol-name =>) "=>")) _) t)
+    (otherwise nil)))
 
 (defun desugar-arrow (form)
   (when (and (first form) (atom (first form)))
@@ -32,7 +36,9 @@
                         form))))
 
 (defmacro $ (&rest forms)
-  `(progn ,@(loop :for form :in forms :collect (desugar form))))
+  `(progn ,@(desugar forms)))
 
 ;; ($ (funcall (funcall (a => (() => a)) 3)))
 ;; => 3
+;; ($ (a => a))
+;; => #<Anonymous Function #x3020013B0FDF>
