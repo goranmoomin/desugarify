@@ -11,14 +11,13 @@
 
 (defun arrow-checker (form)
   (match form
-    ((list _ (guard => (equal (symbol-name =>) "=>")) _) t)
+    ((list _ (and (symbol) (guard => (equal (symbol-name =>) "=>"))) _) t)
     (otherwise nil)))
 
 (defun desugar-arrow (form)
-  (when (and (first form) (atom (first form)))
-    (setf (first form) (list (first form))))
-  `(lambda ,(first form)
-     ,(third form)))
+  (match form
+    ((list (and (symbol) arg) _ return-value) `(lambda (,arg) ,return-value))
+    ((list (and (list) args) _ return-value) `(lambda ,args ,return-value))))
 
 (push (cons #'arrow-checker #'desugar-arrow) *desugar-func*)
 
