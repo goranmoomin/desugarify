@@ -9,3 +9,5 @@
 
 ;; (defmacro defsugar)
 ;; (defun macro-expander (forms))
+;; (defsugar (_ (or '+ '- '* '/) _) (x op y)
+;;   `(,op ,x ,y))
