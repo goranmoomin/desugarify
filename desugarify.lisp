@@ -16,8 +16,8 @@
 
 (defun desugar-arrow (form)
   (match form
-    ((list (and (symbol) arg) _ return-value) `(lambda (,arg) ,return-value))
-    ((list (and (list) args) _ return-value) `(lambda ,args ,return-value))))
+    ((list (and (list) args) _ return-value) `(lambda ,args ,return-value))
+    ((list (and (symbol) arg) _ return-value) `(lambda (,arg) ,return-value))))
 
 (push (cons #'arrow-checker #'desugar-arrow) *desugar-func*)
 
