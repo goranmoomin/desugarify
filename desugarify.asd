@@ -8,4 +8,5 @@
                :trivia)
   :serial t
   :components ((:file "desugarify")
-               (:file "defsugar")))
+               (:file "defsugar")
+               (:file "sugars/arrow-func")))
