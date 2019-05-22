@@ -1,13 +1,18 @@
 ;;;; defsugar.lisp
 
 (defpackage :desugarify.defsugar
-  (:use :cl)
-  (:use :desugarify)
-  (:import-from :trivia :match))
+  (:use :cl :desugarify :trivia)
+  (:export
+   :defsugar
+   :use-sugar))
 
 (in-package :desugarify.defsugar)
 
-;; (defmacro defsugar)
-;; (defun macro-expander (forms))
-;; (defsugar (_ (or '+ '- '* '/) _) (x op y)
-;;   `(,op ,x ,y))
+(defmacro defsugar (name &rest rules)
+  `(defun ,name (form)
+     (match form
+       ,@rules
+       (otherwise nil))))
+
+(defun use-sugar (name)
+  (push (symbol-function name) *desugar-func*))
