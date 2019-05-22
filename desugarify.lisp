@@ -8,16 +8,16 @@
 
 (in-package :desugarify)
 
-(defparameter *desugar-func* (list))
-
-(defun desugar (forms)
-  (loop :for form :in forms
-        :if (atom form)
-          :collect form
-        :else
-          :collect (desugar
-                    (loop :for sugar :in *desugar-func*
-                          :return (or (funcall sugar form) form)))))
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defparameter *desugar-func* (list))
+  (defun desugar (forms)
+    (loop :for form :in forms
+          :if (atom form)
+            :collect form
+          :else
+            :collect (desugar
+                      (loop :for sugar :in *desugar-func*
+                            :return (or (funcall sugar form) form))))))
 
 (defmacro $ (&rest forms)
   `(progn ,@(desugar forms)))

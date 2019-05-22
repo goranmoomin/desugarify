@@ -9,10 +9,13 @@
 (in-package :desugarify.defsugar)
 
 (defmacro defsugar (name &rest rules)
-  `(defun ,name (form)
-     (match form
-       ,@rules
-       (otherwise nil))))
+  `(eval-when (:compile-toplevel :load-toplevel :execute)
+     (defun ,name (form)
+       (match form
+         ,@rules
+         (otherwise nil)))))
 
-(defun use-sugar (name)
-  (push (symbol-function name) *desugar-func*))
+(defmacro use-sugar (name)
+  `(eval-when (:compile-toplevel :load-toplevel :execute)
+     (push (symbol-function ',name) *desugar-func*)))
+
